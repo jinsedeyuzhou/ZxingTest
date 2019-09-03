@@ -22,17 +22,11 @@ import android.graphics.Matrix;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
-import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatReader;
-import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.Result;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 
-import java.util.EnumMap;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -41,7 +35,7 @@ import java.util.Vector;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-final class CodeDecoder {
+public final class CodeDecoder {
 
     private static final String TAG = CodeDecoder.class.getSimpleName();
 

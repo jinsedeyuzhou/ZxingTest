@@ -15,5 +15,6 @@
  limitations under the License.
  -->
 <resources>
-
+  <dimen name="standard_padding">8dip</dimen>
+  <dimen name="half_padding">4dip</dimen>
 </resources>

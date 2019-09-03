@@ -16,9 +16,6 @@
 
 package com.ebrightmoon.zxing;
 
-import android.app.Activity;
-import android.os.Bundle;
-
 /**
  * The main settings activity.
  *
