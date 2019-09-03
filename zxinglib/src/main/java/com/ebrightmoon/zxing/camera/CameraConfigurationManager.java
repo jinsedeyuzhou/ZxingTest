@@ -26,10 +26,10 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.ebrightmoon.zxing.CameraConfigurationUtils;
 import com.ebrightmoon.zxing.Preferences;
 import com.ebrightmoon.zxing.camera.open.CameraFacing;
 import com.ebrightmoon.zxing.camera.open.OpenCamera;
-import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 /**
  * A class which deals with reading, parsing, and setting the camera parameters which are used to

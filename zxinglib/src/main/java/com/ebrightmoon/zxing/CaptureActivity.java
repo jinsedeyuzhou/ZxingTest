@@ -22,7 +22,9 @@ import com.ebrightmoon.zxing.camera.CameraManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -35,6 +37,7 @@ import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
@@ -143,8 +146,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         inactivityTimer.onResume();
 
-//    Intent intent = getIntent();
 
+
+//    Intent intent = getIntent();
 
         decodeFormats = null;
         characterSet = null;
@@ -168,6 +172,27 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
     }
 
+
+    private int getCurrentOrientation() {
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            switch (rotation) {
+                case Surface.ROTATION_0:
+                case Surface.ROTATION_90:
+                    return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+                default:
+                    return ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+            }
+        } else {
+            switch (rotation) {
+                case Surface.ROTATION_0:
+                case Surface.ROTATION_270:
+                    return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+                default:
+                    return ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+            }
+        }
+    }
 
     @Override
     protected void onPause() {
