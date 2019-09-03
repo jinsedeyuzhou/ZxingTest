@@ -85,49 +85,14 @@
         <data android:scheme="zxing" android:host="scan" android:path="/"/>
       </intent-filter>
     </activity>
-    <activity android:name=".PreferencesActivity"
+    <activity android:name=".Preferences"
               android:label="@string/preferences_name"
               android:stateNotNeeded="true"/>
-    <activity android:name=".encode.EncodeActivity"
-              android:stateNotNeeded="true">
-      <intent-filter>
-        <action android:name="com.ebrightmoon.zxing.ENCODE"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
-      <!-- This allows us to handle the Share button in Contacts. -->
-      <intent-filter>
-        <action android:name="android.intent.action.SEND"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <data android:mimeType="text/x-vcard"/>
-      </intent-filter>
-      <!-- This allows us to handle sharing any plain text . -->
-      <intent-filter>
-        <action android:name="android.intent.action.SEND"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <data android:mimeType="text/plain"/>
-      </intent-filter>
-    </activity>
-    <activity android:name=".book.SearchBookContentsActivity"
-              android:label="@string/sbc_name"
-              android:stateNotNeeded="true"
-              android:screenOrientation="sensorLandscape">
-      <intent-filter>
-        <action android:name="com.ebrightmoon.zxing.SEARCH_BOOK_CONTENTS"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
-    </activity>
-    <activity android:name=".share.ShareActivity"
-              android:stateNotNeeded="true"
-              android:screenOrientation="user">
-      <intent-filter>
-        <action android:name="com.ebrightmoon.zxing.SHARE"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
-    </activity>
 
     <activity android:name=".share.BookmarkPickerActivity"
               android:label="@string/bookmark_picker_name"
               android:stateNotNeeded="true"/>
+
     <activity android:name=".share.AppPickerActivity"
               android:label="@string/app_picker_name"
               android:stateNotNeeded="true"/>

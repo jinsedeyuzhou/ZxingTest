@@ -22,10 +22,14 @@ import com.ebrightmoon.zxing.camera.CameraManager;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -57,6 +61,27 @@ public final class ViewfinderView extends View {
   private List<ResultPoint> possibleResultPoints;
   private List<ResultPoint> lastPossibleResultPoints;
 
+  // 设置宽高
+  private int width;
+  private int height;
+  public static int FRAME_WIDTH = -1;
+  public static int FRAME_HEIGHT = -1;
+  public static int FRAME_MARGINTOP = -1;
+  // 扫描框边角颜色
+  private int innercornercolor;
+  // 扫描框边角长度
+  private int innercornerlength;
+  // 扫描框边角宽度
+  private int innercornerwidth;
+  // 扫描线移动的y
+  private int scanLineTop;
+  // 扫描线移动速度
+  private int SCAN_VELOCITY;
+  // 扫描线
+  private Bitmap scanLight;
+  // 是否展示小圆点
+  private boolean isCircle;
+
   // This constructor is used when the class is built from an XML resource.
   public ViewfinderView(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -64,10 +89,57 @@ public final class ViewfinderView extends View {
     // Initialize these once for performance rather than calling them every time in onDraw().
     paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     Resources resources = getResources();
-    maskColor = resources.getColor(R.color.viewfinder_mask);
-    resultColor = resources.getColor(R.color.result_view);
-    laserColor = resources.getColor(R.color.viewfinder_laser);
-    resultPointColor = resources.getColor(R.color.possible_result_points);
+//    maskColor = resources.getColor(R.color.viewfinder_mask);
+//    resultColor = resources.getColor(R.color.result_view);
+//    laserColor = resources.getColor(R.color.viewfinder_laser);
+//    resultPointColor = resources.getColor(R.color.possible_result_points);
+
+    TypedArray attributes = getContext().obtainStyledAttributes(attrs, R.styleable.ViewfinderView);
+
+    this.maskColor = attributes.getColor(R.styleable.ViewfinderView_zxing_viewfinder_mask,
+            resources.getColor(R.color.zxing_viewfinder_mask));
+    this.resultColor = attributes.getColor(R.styleable.ViewfinderView_zxing_result_view,
+            resources.getColor(R.color.zxing_result_view));
+    this.laserColor = attributes.getColor(R.styleable.ViewfinderView_zxing_viewfinder_laser,
+            resources.getColor(R.color.zxing_viewfinder_laser));
+    this.resultPointColor = attributes.getColor(R.styleable.ViewfinderView_zxing_possible_result_points,
+            resources.getColor(R.color.zxing_possible_result_points));
+
+
+    //-----------------------------  边框 -----------------------------------
+
+    // 扫描框距离顶部
+    float innerMarginTop = attributes.getDimension(R.styleable.ViewfinderView_inner_margintop, -1);
+    if (innerMarginTop != -1) {
+   FRAME_MARGINTOP = (int) innerMarginTop;
+    }
+
+    // 扫描框的宽度
+   FRAME_WIDTH = (int) attributes.getDimension(R.styleable.ViewfinderView_inner_width, DisplayUtil.screenWidthPx / 2);
+
+    // 扫描框的高度
+    FRAME_HEIGHT = (int) attributes.getDimension(R.styleable.ViewfinderView_inner_height, DisplayUtil.screenWidthPx / 2);
+
+    // 扫描框边角颜色
+    innercornercolor = attributes.getColor(R.styleable.ViewfinderView_inner_corner_color, Color.parseColor("#45DDDD"));
+    // 扫描框边角长度
+    innercornerlength = (int) attributes.getDimension(R.styleable.ViewfinderView_inner_corner_length, 65);
+    // 扫描框边角宽度
+    innercornerwidth = (int) attributes.getDimension(R.styleable.ViewfinderView_inner_corner_width, 15);
+
+    // 扫描bitmap
+    Drawable drawable = attributes.getDrawable(R.styleable.ViewfinderView_inner_scan_bitmap);
+    if (drawable != null) {
+    }
+
+    // 扫描控件
+    scanLight = BitmapFactory.decodeResource(getResources(), attributes.getResourceId(R.styleable.ViewfinderView_inner_scan_bitmap, R.drawable.scan_light));
+    // 扫描速度
+    SCAN_VELOCITY = attributes.getInt(R.styleable.ViewfinderView_inner_scan_speed, 5);
+
+    isCircle = attributes.getBoolean(R.styleable.ViewfinderView_inner_scan_iscircle, true);
+
+    attributes.recycle();
     scannerAlpha = 0;
     possibleResultPoints = new ArrayList<>(5);
     lastPossibleResultPoints = null;
@@ -103,7 +175,9 @@ public final class ViewfinderView extends View {
       paint.setAlpha(CURRENT_POINT_OPACITY);
       canvas.drawBitmap(resultBitmap, null, frame, paint);
     } else {
-
+//      drawFrameBounds(canvas, frame);
+//
+//      drawScanLight(canvas, frame);
       // Draw a red "laser scanner" line through the middle to show decoding is active
       paint.setColor(laserColor);
       paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
@@ -155,6 +229,73 @@ public final class ViewfinderView extends View {
                             frame.bottom + POINT_SIZE);
     }
   }
+
+
+  /**
+   * 绘制取景框边框
+   *
+   * @param canvas
+   * @param frame
+   */
+  private void drawFrameBounds(Canvas canvas, Rect frame) {
+
+        /*paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(2);
+        paint.setStyle(Paint.Style.STROKE);
+
+        canvas.drawRect(frame, paint);*/
+
+    paint.setColor(innercornercolor);
+    paint.setStyle(Paint.Style.FILL);
+
+    int corWidth = innercornerwidth;
+    int corLength = innercornerlength;
+
+    // 左上角
+    canvas.drawRect(frame.left, frame.top, frame.left + corWidth, frame.top
+            + corLength, paint);
+    canvas.drawRect(frame.left, frame.top, frame.left
+            + corLength, frame.top + corWidth, paint);
+    // 右上角
+    canvas.drawRect(frame.right - corWidth, frame.top, frame.right,
+            frame.top + corLength, paint);
+    canvas.drawRect(frame.right - corLength, frame.top,
+            frame.right, frame.top + corWidth, paint);
+    // 左下角
+    canvas.drawRect(frame.left, frame.bottom - corLength,
+            frame.left + corWidth, frame.bottom, paint);
+    canvas.drawRect(frame.left, frame.bottom - corWidth, frame.left
+            + corLength, frame.bottom, paint);
+    // 右下角
+    canvas.drawRect(frame.right - corWidth, frame.bottom - corLength,
+            frame.right, frame.bottom, paint);
+    canvas.drawRect(frame.right - corLength, frame.bottom - corWidth,
+            frame.right, frame.bottom, paint);
+  }
+
+
+  /**
+   * 绘制移动扫描线
+   *
+   * @param canvas
+   * @param frame
+   */
+  private void drawScanLight(Canvas canvas, Rect frame) {
+
+    if (scanLineTop == 0) {
+      scanLineTop = frame.top;
+    }
+
+    if (scanLineTop >= frame.bottom - 30) {
+      scanLineTop = frame.top;
+    } else {
+      scanLineTop += SCAN_VELOCITY;
+    }
+    Rect scanRect = new Rect(frame.left, scanLineTop, frame.right,
+            scanLineTop + 30);
+    canvas.drawBitmap(scanLight, null, scanRect, paint);
+  }
+
 
   public void drawViewfinder() {
     Bitmap resultBitmap = this.resultBitmap;

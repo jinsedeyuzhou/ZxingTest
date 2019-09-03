@@ -53,6 +53,10 @@ public final class ViewfinderView extends View {
     private Collection<ResultPoint> possibleResultPoints;
     private Collection<ResultPoint> lastPossibleResultPoints;
 
+    // 设置宽高
+    private int width;
+    private int height;
+
     public ViewfinderView(Context context) {
         this(context, null);
     }

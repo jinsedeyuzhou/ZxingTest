@@ -17,7 +17,7 @@
 package com.ebrightmoon.zxing.camera;
 
 import android.content.SharedPreferences;
-import com.ebrightmoon.zxing.PreferencesActivity;
+import com.ebrightmoon.zxing.Preferences;
 
 /**
  * Enumerates settings of the preference controlling the front light.
@@ -36,7 +36,7 @@ public enum FrontLightMode {
   }
 
   public static FrontLightMode readPref(SharedPreferences sharedPrefs) {
-    return parse(sharedPrefs.getString(PreferencesActivity.KEY_FRONT_LIGHT_MODE, OFF.toString()));
+    return parse(sharedPrefs.getString(Preferences.KEY_FRONT_LIGHT_MODE, OFF.toString()));
   }
 
 }
