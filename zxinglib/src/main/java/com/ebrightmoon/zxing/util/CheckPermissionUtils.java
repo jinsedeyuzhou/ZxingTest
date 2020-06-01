@@ -1,4 +1,4 @@
-package com.ebrightmoon.zxing;
+package com.ebrightmoon.zxing.util;
 
 import android.Manifest;
 import android.content.Context;

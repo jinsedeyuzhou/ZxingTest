@@ -26,7 +26,7 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
-import com.ebrightmoon.zxing.CameraConfigurationUtils;
+import com.ebrightmoon.zxing.util.CameraConfigurationUtils;
 import com.ebrightmoon.zxing.Preferences;
 import com.ebrightmoon.zxing.camera.open.CameraFacing;
 import com.ebrightmoon.zxing.camera.open.OpenCamera;

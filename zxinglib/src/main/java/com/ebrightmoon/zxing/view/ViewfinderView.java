@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package com.ebrightmoon.zxing;
+package com.ebrightmoon.zxing.view;
 
+import com.ebrightmoon.zxing.util.DisplayUtil;
+import com.ebrightmoon.zxing.R;
 import com.google.zxing.ResultPoint;
 import com.ebrightmoon.zxing.camera.CameraManager;
 

@@ -1,4 +1,4 @@
-package com.ebrightmoon.zxing;
+package com.ebrightmoon.zxing.util;
 
 /**
  * Time: 2019-09-03

@@ -1,18 +1,17 @@
 package com.ebrightmoon.zxing;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.ebrightmoon.zxing.encode.CodeEncoder;
+import com.ebrightmoon.zxing.page.CaptureActivity;
 
 /**
  * Time: 2019-09-03

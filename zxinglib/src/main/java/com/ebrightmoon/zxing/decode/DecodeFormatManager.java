@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.ebrightmoon.zxing;
+package com.ebrightmoon.zxing.decode;
 
 import android.content.Intent;
 import android.net.Uri;
+
+import com.ebrightmoon.zxing.Intents;
 import com.google.zxing.BarcodeFormat;
 
 import java.util.Arrays;
