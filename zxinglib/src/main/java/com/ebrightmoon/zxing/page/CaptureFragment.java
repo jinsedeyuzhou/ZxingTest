@@ -25,12 +25,14 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ebrightmoon.zxing.AmbientLightManager;
 import com.ebrightmoon.zxing.BeepManager;
 import com.ebrightmoon.zxing.FinishListener;
 import com.ebrightmoon.zxing.InactivityTimer;
 import com.ebrightmoon.zxing.R;
+import com.ebrightmoon.zxing.ScannerOptions;
 import com.ebrightmoon.zxing.camera.CameraManager;
 import com.ebrightmoon.zxing.view.ViewfinderView;
 import com.google.zxing.BarcodeFormat;
@@ -123,9 +125,18 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
         // want to open the camera driver and measure the screen size if we're going to show the help on
         // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
         // off screen.
-        cameraManager = new CameraManager(mActivity.getApplication());
+        ScannerOptions scannerOptions = new ScannerOptions.Builder()
+                .setFrameHide(true)
+                .setFrameCornerHide(true)
+                .setScanFullScreen(true)
+                .setLaserMoveFullScreen(true)
+                .setFrameSize(200,200)
+                .setLaserStyle(ScannerOptions.LaserStyle.RES_GRID, R.drawable.zfb_grid_scan_line)
+                .build();
+        cameraManager = new CameraManager(mActivity.getApplication(), scannerOptions);
 
         viewfinderView.setCameraManager(cameraManager);
+        viewfinderView.setScannerOptions(scannerOptions);
 
         handler = null;
         lastResult = null;
@@ -184,6 +195,7 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
         inactivityTimer.onPause();
         ambientLightManager.stop();
         beepManager.close();
+        viewfinderView.laserLineBitmapRecycle();
         cameraManager.closeDriver();
         //historyManager = null; // Keep for onActivityResult
         if (!hasSurface) {
@@ -238,7 +250,7 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
         if (rawResult.getText() != null && !TextUtils.isEmpty(rawResult.getText())) {
             playBeepSoundAndVibrate();
             restartPreviewAfterDelay(2000L);
-
+            Toast.makeText(mContext,rawResult.getText(),Toast.LENGTH_SHORT).show();
             if (analyzeCallback != null) {
                 analyzeCallback.onAnalyzeSuccess(barcode, rawResult.getText());
             }
@@ -390,8 +402,8 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
      */
     public interface AnalyzeCallback {
 
-         void onAnalyzeSuccess(Bitmap mBitmap, String result);
+        void onAnalyzeSuccess(Bitmap mBitmap, String result);
 
-         void onAnalyzeFailed();
+        void onAnalyzeFailed();
     }
 }

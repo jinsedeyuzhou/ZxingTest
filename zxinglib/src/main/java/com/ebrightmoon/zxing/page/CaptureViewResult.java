@@ -66,8 +66,8 @@ public final class CaptureViewResult extends Handler {
                       CameraManager cameraManager) {
         this.captureFragment = captureFragment;
         this.cameraManager = cameraManager;
-        decodeThread = new DecodeThread(cameraManager, captureFragment.getHandler(), decodeFormats, characterSet,
-                new ViewfinderResultPointCallback(captureFragment.getViewfinderView()));
+        decodeThread = new DecodeThread(cameraManager, this, decodeFormats, characterSet,
+                new ViewfinderResultPointCallback(captureFragment.getViewfinderView()), true);
         decodeThread.start();
         state = State.SUCCESS;
 

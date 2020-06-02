@@ -1,10 +1,3 @@
-package com.ebrightmoon.zxing.util;
-
-/**
- * Time: 2019-09-03
- * Author:wyy
- * Description:
- */
 /*
  * Copyright (C) 2014 ZXing authors
  *
@@ -21,41 +14,38 @@ package com.ebrightmoon.zxing.util;
  * limitations under the License.
  */
 
+package com.ebrightmoon.zxing.util;
 
-import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
-import android.os.Build;
 import android.util.Log;
 
-import java.util.ArrayList;
+import com.ebrightmoon.zxing.camera.SizeComparator;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Utility methods for configuring the Android camera.
  *
- * @author Sean Owen
+ * @author Sean Owen 2017/05/05 7:30
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+@SuppressWarnings("deprecation") // camera APIs
 public final class CameraConfigurationUtils {
 
     private static final String TAG = "CameraConfiguration";
 
-    private static final Pattern SEMICOLON = Pattern.compile(";");
+//    private static final Pattern SEMICOLON = Pattern.compile(";");
 
     private static final int MIN_PREVIEW_PIXELS = 480 * 320; // normal screen
     private static final float MAX_EXPOSURE_COMPENSATION = 1.5f;
     private static final float MIN_EXPOSURE_COMPENSATION = 0.0f;
     private static final double MAX_ASPECT_DISTORTION = 0.15;
-    private static final int MIN_FPS = 10;
-    private static final int MAX_FPS = 20;
+//        private static final int MIN_FPS = 10;
+//    private static final int MAX_FPS = 20;
     private static final int AREA_PER_1000 = 400;
 
     private CameraConfigurationUtils() {
@@ -141,44 +131,44 @@ public final class CameraConfigurationUtils {
         }
     }
 
-    public static void setBestPreviewFPS(Camera.Parameters parameters) {
-        setBestPreviewFPS(parameters, MIN_FPS, MAX_FPS);
-    }
+//    public static void setBestPreviewFPS(Camera.Parameters parameters) {
+//        setBestPreviewFPS(parameters, MIN_FPS, MAX_FPS);
+//    }
 
-    public static void setBestPreviewFPS(Camera.Parameters parameters, int minFPS, int maxFPS) {
-        List<int[]> supportedPreviewFpsRanges = parameters.getSupportedPreviewFpsRange();
-        Log.i(TAG, "Supported FPS ranges: " + toString(supportedPreviewFpsRanges));
-        if (supportedPreviewFpsRanges != null && !supportedPreviewFpsRanges.isEmpty()) {
-            int[] suitableFPSRange = null;
-            for (int[] fpsRange : supportedPreviewFpsRanges) {
-                int thisMin = fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX];
-                int thisMax = fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX];
-                if (thisMin >= minFPS * 1000 && thisMax <= maxFPS * 1000) {
-                    suitableFPSRange = fpsRange;
-                    break;
-                }
-            }
-            if (suitableFPSRange == null) {
-                Log.i(TAG, "No suitable FPS range?");
-            } else {
-                int[] currentFpsRange = new int[2];
-                parameters.getPreviewFpsRange(currentFpsRange);
-                if (Arrays.equals(currentFpsRange, suitableFPSRange)) {
-                    Log.i(TAG, "FPS range already set to " + Arrays.toString(suitableFPSRange));
-                } else {
-                    Log.i(TAG, "Setting FPS range to " + Arrays.toString(suitableFPSRange));
-                    parameters.setPreviewFpsRange(suitableFPSRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
-                            suitableFPSRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-                }
-            }
-        }
-    }
+//    public static void setBestPreviewFPS(Camera.Parameters parameters, int minFPS, int maxFPS) {
+//        List<int[]> supportedPreviewFpsRanges = parameters.getSupportedPreviewFpsRange();
+//        Log.i(TAG, "Supported FPS ranges: " + toString(supportedPreviewFpsRanges));
+//        if (supportedPreviewFpsRanges != null && !supportedPreviewFpsRanges.isEmpty()) {
+//            int[] suitableFPSRange = null;
+//            for (int[] fpsRange : supportedPreviewFpsRanges) {
+//                int thisMin = fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX];
+//                int thisMax = fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX];
+//                if (thisMin >= minFPS * 1000 && thisMax <= maxFPS * 1000) {
+//                    suitableFPSRange = fpsRange;
+//                    break;
+//                }
+//            }
+//            if (suitableFPSRange == null) {
+//                Log.i(TAG, "No suitable FPS range?");
+//            } else {
+//                int[] currentFpsRange = new int[2];
+//                parameters.getPreviewFpsRange(currentFpsRange);
+//                if (Arrays.equals(currentFpsRange, suitableFPSRange)) {
+//                    Log.i(TAG, "FPS range already set to " + Arrays.toString(suitableFPSRange));
+//                } else {
+//                    Log.i(TAG, "Setting FPS range to " + Arrays.toString(suitableFPSRange));
+//                    parameters.setPreviewFpsRange(suitableFPSRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
+//                            suitableFPSRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
+//                }
+//            }
+//        }
+//    }
 
     public static void setFocusArea(Camera.Parameters parameters) {
         if (parameters.getMaxNumFocusAreas() > 0) {
-            Log.i(TAG, "Old focus areas: " + toString(parameters.getFocusAreas()));
+//            Log.i(TAG, "Old focus areas: " + toString(parameters.getFocusAreas()));
             List<Camera.Area> middleArea = buildMiddleArea(AREA_PER_1000);
-            Log.i(TAG, "Setting focus area to : " + toString(middleArea));
+//            Log.i(TAG, "Setting focus area to : " + toString(middleArea));
             parameters.setFocusAreas(middleArea);
         } else {
             Log.i(TAG, "Device does not support focus areas");
@@ -187,9 +177,9 @@ public final class CameraConfigurationUtils {
 
     public static void setMetering(Camera.Parameters parameters) {
         if (parameters.getMaxNumMeteringAreas() > 0) {
-            Log.i(TAG, "Old metering areas: " + parameters.getMeteringAreas());
+//            Log.i(TAG, "Old metering areas: " + parameters.getMeteringAreas());
             List<Camera.Area> middleArea = buildMiddleArea(AREA_PER_1000);
-            Log.i(TAG, "Setting metering area to : " + toString(middleArea));
+//            Log.i(TAG, "Setting metering area to : " + toString(middleArea));
             parameters.setMeteringAreas(middleArea);
         } else {
             Log.i(TAG, "Device does not support metering areas");
@@ -291,47 +281,24 @@ public final class CameraConfigurationUtils {
             return new Point(defaultSize.width, defaultSize.height);
         }
 
-        // Sort by size, descending
-        List<Camera.Size> supportedPreviewSizes = new ArrayList<>(rawSupportedSizes);
-        Collections.sort(supportedPreviewSizes, new Comparator<Camera.Size>() {
-            @Override
-            public int compare(Camera.Size a, Camera.Size b) {
-                int aPixels = a.height * a.width;
-                int bPixels = b.height * b.width;
-                if (bPixels < aPixels) {
-                    return -1;
-                }
-                if (bPixels > aPixels) {
-                    return 1;
-                }
-                return 0;
-            }
-        });
-
         if (Log.isLoggable(TAG, Log.INFO)) {
             StringBuilder previewSizesString = new StringBuilder();
-            for (Camera.Size supportedPreviewSize : supportedPreviewSizes) {
-                previewSizesString.append(supportedPreviewSize.width).append('x')
-                        .append(supportedPreviewSize.height).append(' ');
+            for (Camera.Size size : rawSupportedSizes) {
+                previewSizesString.append(size.width).append('x').append(size.height).append(' ');
             }
             Log.i(TAG, "Supported preview sizes: " + previewSizesString);
         }
 
-//        double screenAspectRatio = screenResolution.x / (double) screenResolution.y;
-        double screenAspectRatio;
-        if (screenResolution.x < screenResolution.y) { // 竖屏
-            screenAspectRatio = (double) screenResolution.y / (double) screenResolution.x;
-        } else {
-            screenAspectRatio = (double) screenResolution.x / (double) screenResolution.y;
-        }
-        // Remove sizes that are unsuitable
-        Iterator<Camera.Size> it = supportedPreviewSizes.iterator();
-        while (it.hasNext()) {
-            Camera.Size supportedPreviewSize = it.next();
-            int realWidth = supportedPreviewSize.width;
-            int realHeight = supportedPreviewSize.height;
-            if (realWidth * realHeight < MIN_PREVIEW_PIXELS) {
-                it.remove();
+        double screenAspectRatio = screenResolution.x / (double) screenResolution.y;
+
+        // Find a suitable size, with max resolution
+        int maxResolution = 0;
+        Camera.Size maxResPreviewSize = null;
+        for (Camera.Size size : rawSupportedSizes) {
+            int realWidth = size.width;
+            int realHeight = size.height;
+            int resolution = realWidth * realHeight;
+            if (resolution < MIN_PREVIEW_PIXELS) {
                 continue;
             }
 
@@ -341,23 +308,28 @@ public final class CameraConfigurationUtils {
             double aspectRatio = maybeFlippedWidth / (double) maybeFlippedHeight;
             double distortion = Math.abs(aspectRatio - screenAspectRatio);
             if (distortion > MAX_ASPECT_DISTORTION) {
-                it.remove();
                 continue;
             }
 
-//            if (maybeFlippedWidth == screenResolution.x && maybeFlippedHeight == screenResolution.y) {
-//                Point exactPoint = new Point(realWidth, realHeight);
-//                Log.i(TAG, "Found preview size exactly matching screen size: " + exactPoint);
-//                return exactPoint;
-//            }
+            if (maybeFlippedWidth == screenResolution.x && maybeFlippedHeight == screenResolution.y) {
+                Point exactPoint = new Point(realWidth, realHeight);
+                Log.i(TAG, "Found preview size exactly matching screen size: " + exactPoint);
+                return exactPoint;
+            }
+
+            // Resolution is suitable; record the one with max resolution
+            if (resolution > maxResolution) {
+                maxResolution = resolution;
+                maxResPreviewSize = size;
+            }
         }
 
         // If no exact match, use largest preview size. This was not a great idea on older devices because
         // of the additional computation needed. We're likely to get here on newer Android 4+ devices, where
         // the CPU is much more powerful.
-        if (!supportedPreviewSizes.isEmpty()) {
-            Camera.Size largestPreview = supportedPreviewSizes.get(0);
-            Point largestSize = new Point(largestPreview.width, largestPreview.height);
+        if (maxResPreviewSize != null) {
+            Camera.Size closelySize = findCloselySize(maxResPreviewSize.width, maxResPreviewSize.height, rawSupportedSizes);
+            Point largestSize = new Point(closelySize.width, closelySize.height);
             Log.i(TAG, "Using largest suitable preview size: " + largestSize);
             return largestSize;
         }
@@ -389,70 +361,83 @@ public final class CameraConfigurationUtils {
         return null;
     }
 
-    private static String toString(Collection<int[]> arrays) {
-        if (arrays == null || arrays.isEmpty()) {
-            return "[]";
-        }
-        StringBuilder buffer = new StringBuilder();
-        buffer.append('[');
-        Iterator<int[]> it = arrays.iterator();
-        while (it.hasNext()) {
-            buffer.append(Arrays.toString(it.next()));
-            if (it.hasNext()) {
-                buffer.append(", ");
-            }
-        }
-        buffer.append(']');
-        return buffer.toString();
+//    private static String toString(Collection<int[]> arrays) {
+//        if (arrays == null || arrays.isEmpty()) {
+//            return "[]";
+//        }
+//        StringBuilder buffer = new StringBuilder();
+//        buffer.append('[');
+//        Iterator<int[]> it = arrays.iterator();
+//        while (it.hasNext()) {
+//            buffer.append(Arrays.toString(it.next()));
+//            if (it.hasNext()) {
+//                buffer.append(", ");
+//            }
+//        }
+//        buffer.append(']');
+//        return buffer.toString();
+//    }
+
+//    private static String toString(Iterable<Camera.Area> areas) {
+//        if (areas == null) {
+//            return null;
+//        }
+//        StringBuilder result = new StringBuilder();
+//        for (Camera.Area area : areas) {
+//            result.append(area.rect).append(':').append(area.weight).append(' ');
+//        }
+//        return result.toString();
+//    }
+
+//    public static String collectStats(Camera.Parameters parameters) {
+//        return collectStats(parameters.flatten());
+//    }
+
+//    public static String collectStats(CharSequence flattenedParams) {
+//        StringBuilder result = new StringBuilder(1000);
+//
+//        result.append("BOARD=").append(Build.BOARD).append('\n');
+//        result.append("BRAND=").append(Build.BRAND).append('\n');
+//        result.append("CPU_ABI=").append(Build.CPU_ABI).append('\n');
+//        result.append("DEVICE=").append(Build.DEVICE).append('\n');
+//        result.append("DISPLAY=").append(Build.DISPLAY).append('\n');
+//        result.append("FINGERPRINT=").append(Build.FINGERPRINT).append('\n');
+//        result.append("HOST=").append(Build.HOST).append('\n');
+//        result.append("ID=").append(Build.ID).append('\n');
+//        result.append("MANUFACTURER=").append(Build.MANUFACTURER).append('\n');
+//        result.append("MODEL=").append(Build.MODEL).append('\n');
+//        result.append("PRODUCT=").append(Build.PRODUCT).append('\n');
+//        result.append("TAGS=").append(Build.TAGS).append('\n');
+//        result.append("TIME=").append(Build.TIME).append('\n');
+//        result.append("TYPE=").append(Build.TYPE).append('\n');
+//        result.append("USER=").append(Build.USER).append('\n');
+//        result.append("VERSION.CODENAME=").append(Build.VERSION.CODENAME).append('\n');
+//        result.append("VERSION.INCREMENTAL=").append(Build.VERSION.INCREMENTAL).append('\n');
+//        result.append("VERSION.RELEASE=").append(Build.VERSION.RELEASE).append('\n');
+//        result.append("VERSION.SDK_INT=").append(Build.VERSION.SDK_INT).append('\n');
+//
+//        if (flattenedParams != null) {
+//            String[] params = SEMICOLON.split(flattenedParams);
+//            Arrays.sort(params);
+//            for (String param : params) {
+//                result.append(param).append('\n');
+//            }
+//        }
+//
+//        return result.toString();
+//    }
+
+    /**
+     * 通过对比得到与宽高比最接近的尺寸（如果有相同尺寸，优先选择）
+     *
+     * @param surfaceWidth  需要被进行对比的原宽
+     * @param surfaceHeight 需要被进行对比的原高
+     * @param preSizeList   需要对比的预览尺寸列表
+     * @return 得到与原宽高比例最接近的尺寸
+     */
+    protected static Camera.Size findCloselySize(int surfaceWidth, int surfaceHeight
+            , List<Camera.Size> preSizeList) {
+        Collections.sort(preSizeList, new SizeComparator(surfaceWidth, surfaceHeight));
+        return preSizeList.get(0);
     }
-
-    private static String toString(Iterable<Camera.Area> areas) {
-        if (areas == null) {
-            return null;
-        }
-        StringBuilder result = new StringBuilder();
-        for (Camera.Area area : areas) {
-            result.append(area.rect).append(':').append(area.weight).append(' ');
-        }
-        return result.toString();
-    }
-
-    public static String collectStats(Camera.Parameters parameters) {
-        return collectStats(parameters.flatten());
-    }
-
-    public static String collectStats(CharSequence flattenedParams) {
-        StringBuilder result = new StringBuilder(1000);
-
-        result.append("BOARD=").append(Build.BOARD).append('\n');
-        result.append("BRAND=").append(Build.BRAND).append('\n');
-        result.append("CPU_ABI=").append(Build.CPU_ABI).append('\n');
-        result.append("DEVICE=").append(Build.DEVICE).append('\n');
-        result.append("DISPLAY=").append(Build.DISPLAY).append('\n');
-        result.append("FINGERPRINT=").append(Build.FINGERPRINT).append('\n');
-        result.append("HOST=").append(Build.HOST).append('\n');
-        result.append("ID=").append(Build.ID).append('\n');
-        result.append("MANUFACTURER=").append(Build.MANUFACTURER).append('\n');
-        result.append("MODEL=").append(Build.MODEL).append('\n');
-        result.append("PRODUCT=").append(Build.PRODUCT).append('\n');
-        result.append("TAGS=").append(Build.TAGS).append('\n');
-        result.append("TIME=").append(Build.TIME).append('\n');
-        result.append("TYPE=").append(Build.TYPE).append('\n');
-        result.append("USER=").append(Build.USER).append('\n');
-        result.append("VERSION.CODENAME=").append(Build.VERSION.CODENAME).append('\n');
-        result.append("VERSION.INCREMENTAL=").append(Build.VERSION.INCREMENTAL).append('\n');
-        result.append("VERSION.RELEASE=").append(Build.VERSION.RELEASE).append('\n');
-        result.append("VERSION.SDK_INT=").append(Build.VERSION.SDK_INT).append('\n');
-
-        if (flattenedParams != null) {
-            String[] params = SEMICOLON.split(flattenedParams);
-            Arrays.sort(params);
-            for (String param : params) {
-                result.append(param).append('\n');
-            }
-        }
-
-        return result.toString();
-    }
-
 }

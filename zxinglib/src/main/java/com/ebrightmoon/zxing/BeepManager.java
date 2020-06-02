@@ -51,6 +51,7 @@ public final class BeepManager implements MediaPlayer.OnErrorListener, Closeable
     updatePrefs();
   }
 
+
   public synchronized void updatePrefs() {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
     playBeep = shouldBeep(prefs, activity);
@@ -63,7 +64,7 @@ public final class BeepManager implements MediaPlayer.OnErrorListener, Closeable
     }
   }
 
-  synchronized void playBeepSoundAndVibrate() {
+ public  synchronized void playBeepSoundAndVibrate() {
     if (playBeep && mediaPlayer != null) {
       mediaPlayer.start();
     }

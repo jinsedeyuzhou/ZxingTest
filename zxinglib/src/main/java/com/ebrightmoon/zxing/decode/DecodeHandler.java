@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 
 import com.ebrightmoon.zxing.R;
 import com.ebrightmoon.zxing.camera.CameraManager;
-import com.ebrightmoon.zxing.page.CaptureFragment;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
@@ -43,15 +42,17 @@ final class DecodeHandler extends Handler {
 
     private static final String TAG = DecodeHandler.class.getSimpleName();
     private final CameraManager cameraManager;
-    private final Handler viewHandler;
+    private final Handler scannerViewHandler;
     private final MultiFormatReader multiFormatReader;
     private boolean running = true;
+    private boolean bundleThumbnail = false;
 
-    DecodeHandler(CameraManager cameraManager,Handler viewHandler, Map<DecodeHintType, Object> hints) {
+    DecodeHandler(CameraManager cameraManager, Handler scannerViewHandler, Map<DecodeHintType, Object> hints, boolean bundleThumbnail) {
         multiFormatReader = new MultiFormatReader();
         multiFormatReader.setHints(hints);
-        this.cameraManager=cameraManager;
-        this.viewHandler=viewHandler;
+        this.cameraManager = cameraManager;
+        this.scannerViewHandler = scannerViewHandler;
+        this.bundleThumbnail = bundleThumbnail;
     }
 
     @Override
@@ -91,34 +92,36 @@ final class DecodeHandler extends Handler {
 //        width = height;
 //        height = tmp;
 
-        PlanarYUVLuminanceSource source =cameraManager.buildLuminanceSource(data, width, height);
+        PlanarYUVLuminanceSource source = cameraManager.buildLuminanceSource(data, width, height);
         if (source != null) {
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
             try {
                 rawResult = multiFormatReader.decodeWithState(bitmap);
             } catch (ReaderException re) {
                 // continue
-//                re.printStackTrace();
+                re.printStackTrace();
             } finally {
                 multiFormatReader.reset();
             }
         }
 
-//        Handler handler = activity.getHandler();
+        Handler handler = scannerViewHandler;
         if (rawResult != null) {
             // Don't log the barcode contents for security.
             long end = System.nanoTime();
             Log.d(TAG, "Found barcode in " + TimeUnit.NANOSECONDS.toMillis(end - start) + " ms");
-            if (viewHandler != null) {
-                Message message = Message.obtain(viewHandler, R.id.decode_succeeded, rawResult);
+            if (handler != null) {
+                Message message = Message.obtain(handler, R.id.decode_succeeded, rawResult);
                 Bundle bundle = new Bundle();
-                bundleThumbnail(source, bundle);
+                if (bundleThumbnail) {
+                    bundleThumbnail(source, bundle);
+                }
                 message.setData(bundle);
                 message.sendToTarget();
             }
         } else {
-            if (viewHandler != null) {
-                Message message = Message.obtain(viewHandler, R.id.decode_failed);
+            if (handler != null) {
+                Message message = Message.obtain(handler, R.id.decode_failed);
                 message.sendToTarget();
             }
         }

@@ -35,7 +35,7 @@
         app:inner_corner_width="5dp"
         app:inner_height="200dp"
         app:inner_margintop="150dp"
-        app:inner_scan_bitmap="@drawable/scan_image"
+        app:inner_scan_bitmap="@drawable/zfb_grid_scan_line"
         app:inner_scan_iscircle="true"
         app:inner_scan_speed="10"
         app:inner_width="200dp" />
